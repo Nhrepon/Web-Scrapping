@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const axios  = require('axios');
 
-const url = 'https://www.goodreads.com/quotes?page=2';
+const url = 'https://www.goodreads.com/quotes?page=15';
 
 // Run the scraper
 scrapeQuotes(url);
@@ -41,6 +41,7 @@ async function scrapeQuotes(url) {
     });
 
     quotes.map(async(item, index) => {
+
         let authorData = {
             name: item.author,
             bio: "", 
@@ -50,7 +51,7 @@ async function scrapeQuotes(url) {
         let createAuthor = await axios.post("http://localhost:2000/api/createAuthor", authorData, 
             { headers: { "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im51cmhvc3NhaW5yZXBvbjcyNDhAZ21haWwuY29tIiwidXNlcklkIjoiNjdjMTNlMmZlMThjYzUxYzIyNmJiMGQ0Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQxMjc0OTQ3LCJleHAiOjE3NDM4NjY5NDd9.RP5I2do-I6Ns9mSoSdMLawJWwGdOF_Isfk5HSPgUW4c", } });
 
-            console.log("author id is: "+ index +" = "+ createAuthor.data.data._id);
+            console.log("author id is: "+ index + " = " +createAuthor.data.status+ " = "+ createAuthor.data.data._id);
         
         let data  = {
             authorId: createAuthor.data.data._id,
@@ -61,13 +62,11 @@ async function scrapeQuotes(url) {
         let createQuote = await axios.post("http://localhost:2000/api/createQuote", data, 
             { headers: { "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im51cmhvc3NhaW5yZXBvbjcyNDhAZ21haWwuY29tIiwidXNlcklkIjoiNjdjMTNlMmZlMThjYzUxYzIyNmJiMGQ0Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQxMjc0OTQ3LCJleHAiOjE3NDM4NjY5NDd9.RP5I2do-I6Ns9mSoSdMLawJWwGdOF_Isfk5HSPgUW4c", } });
 
-            console.log(createQuote.data);
+            console.log(createQuote.data.status);
 
 
       //console.log(index+1 +" = "+ item.quote)
     });
-
-    // console.log('Scraped Quotes:', quotes);
     console.log('Total Quotes Scraped:', quotes.length);
 
     // fs.writeFileSync(`quotes.json`, JSON.stringify(quotes, null, 2));
